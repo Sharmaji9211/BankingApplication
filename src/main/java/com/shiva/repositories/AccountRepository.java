@@ -1,0 +1,16 @@
+package com.shiva.repositories;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.shiva.models.Account;
+
+public interface AccountRepository extends JpaRepository<Account, Integer> {
+
+	@Query("select accountno from Account where userId =:arg")
+	int getAccountNo( @Param("arg") String userid);
+
+	@Query("select amount from Account where accountno=:args")
+	int getAmount(@Param("args") int accountno);
+
+}

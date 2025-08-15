@@ -1,0 +1,40 @@
+package com.shiva.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import com.cetpa.models.TransactionInfo;
+import com.cetpa.services.AccountService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
+
+
+@Controller
+@RequestMapping("/services")
+public class DpositeController {
+
+	@Autowired private AccountService accountService;
+	
+	@GetMapping("/deposit-form")
+	public String getDepositeForm() {
+		return "service/deposit/deposit-money-form";
+	}
+	
+	@GetMapping("/deposit.do")
+	public ModelAndView getDepositMoney(int amount, @SessionAttribute int accountno) {
+	    System.out.println("Account No from session: " + accountno); // Debug logging
+	    System.out.println("Deposit amount: " + amount); // Debug logging
+	    
+	    TransactionInfo transaction = accountService.depositMoney(accountno, amount);
+	    
+	    System.out.println("Transaction created: " + transaction); // Debug logging
+	    ModelAndView modelAndView = new ModelAndView("service/deposit/deposit-money-success");
+	    modelAndView.addObject("transaction", transaction);
+	    return modelAndView;
+	}
+
+	
+}
+

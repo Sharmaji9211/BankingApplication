@@ -1,0 +1,8 @@
+package com.shiva.models;
+
+public class Snippet {
+	public static void main(String[] args) {
+		com.shiva.models
+	}
+}
+

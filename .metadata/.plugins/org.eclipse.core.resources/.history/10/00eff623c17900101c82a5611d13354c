@@ -1,0 +1,41 @@
+package com.bank.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.shiva.models.TransactionInfo;
+import com.shiva.services.AccountService;
+
+@Controller
+@RequestMapping("services/withdraw")
+public class WithdrawController {
+	@Autowired private AccountService accountService;
+	
+	@GetMapping("/withdraw-form")
+	public String getWithdrawForm() {
+		return "service/withdraw/withdraw-money-form";
+	}
+	@GetMapping("/withdraw.do")
+	public ModelAndView WithdrawMoney(int amount, @SessionAttribute int accountno) {
+		int curentAmount=accountService.getAmount(accountno);
+		ModelAndView modelAndView=new ModelAndView("service/withdraw/withdraw-money-success");
+		
+		if(curentAmount <amount) {
+			modelAndView.setViewName("service/withdraw/withdraw-money-form");
+			modelAndView.addObject("msg", "Sorry !! You do not have  sufficient amount!");
+			return modelAndView;
+		}else {
+		TransactionInfo transaction= accountService.withdraw(amount, accountno);
+		modelAndView.addObject("transaction", transaction);
+		return modelAndView;
+		} 
+		
+	}
+	
+	
+
+}

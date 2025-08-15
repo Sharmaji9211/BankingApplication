@@ -1,0 +1,19 @@
+package com.shiva.services;
+
+import com.bank.models.TransactionInfo;
+
+public interface AccountService {
+
+	int getAmount(int accountno);
+
+	TransactionInfo deposit(int amount, int accountno);
+
+	TransactionInfo withdraw(int amount, int accountno);
+
+	boolean existAccountno(int accountno);
+
+	
+
+	
+
+}

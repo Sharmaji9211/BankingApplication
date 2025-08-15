@@ -1,0 +1,40 @@
+
+package com.shiva.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.shiva.models.TransactionInfo;
+import com.shiva.services.AccountService;
+import com.shiva.services.TransactionService;
+
+@Controller
+@RequestMapping("/services")
+public class ServiceController 
+{  
+    @Autowired private TransactionService service;
+	@Autowired private AccountService accountService;
+	
+	@GetMapping("/view-balance")
+	public ModelAndView viewBalance(@SessionAttribute int accountno) {
+		
+		int amount=accountService.getAmount(accountno);
+		ModelAndView modelAndView= new ModelAndView("service/balance/show-balance");
+		modelAndView.addObject("amount",amount);
+		return modelAndView;
+	}
+	@GetMapping("/view-statements")
+	public ModelAndView getStatementView(@SessionAttribute int accountno)
+	{
+		List<TransactionInfo> statements=service.getStatements(accountno);
+		ModelAndView model=new ModelAndView("service/balance/show-statements");
+		model.addObject("statementList",statements);
+		return model;
+	}
+}

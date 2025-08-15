@@ -1,0 +1,73 @@
+package com.shiva.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
+import com.shiva.models.TransactionInfo;
+import com.shiva.models.User;
+import com.shiva.services.AccountService;
+import com.shiva.services.TransactionService;
+import com.shiva.services.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
+
+@Controller
+@RequestMapping("services/transfer")
+public class TranferController {
+	@Autowired private UserService userService;
+	 @Autowired private AccountService accountService;
+	 @Autowired private TransactionService transactionService;
+	 
+	
+	@GetMapping("/transfer-form")
+	public String getTransferForm() {
+		return "service/transfer/transfer-money-form";
+	}
+	@GetMapping("/verify-account.do")
+	public String VarifyAccount(@SessionAttribute int accountno, int raccountno,Model model){
+		if(raccountno==accountno) {
+			model.addAttribute("raccountno",raccountno);
+			model.addAttribute("msg", "This is your own account number");
+			return "service/transfer/transfer-money-form";
+			
+			
+		}
+		if(!accountService.existAccountno(raccountno)) {
+			model.addAttribute("raccountno",raccountno);
+			model.addAttribute("msg", "Entered Account number does not Exist!");
+			return "service/transfer/transfer-money-form";
+			
+		}
+		User user=userService.getUser(raccountno);
+		model.addAttribute("rname", user.getFirstname()+" "+user.getLastname());
+		model.addAttribute("raccountno",raccountno);
+		return "service/transfer/transfer-money-next-form";	
+	}
+	@PostMapping("/transfer.do")
+	public ModelAndView TransferSuccess( HttpSession ses,int amount,  int raccountno , @SessionAttribute int accountno ) {
+		
+		ModelAndView modelAndView=new ModelAndView();
+		int currAmount=accountService.getAmount(accountno);
+		if(currAmount<amount || amount<1) {
+			modelAndView.addObject("msg", "You don't have sufficient Amount ! or Invalid Amount");
+			modelAndView.setViewName("service/transfer/transfer-money-next-form");
+			return modelAndView;
+		}
+		User ruser=userService.getUser(raccountno);
+		
+		modelAndView.setViewName("service/transfer/transfer-money-success");
+		TransactionInfo transactionInfo =transactionService.tranfer(amount,raccountno, accountno);
+		modelAndView.addObject("transaction", transactionInfo);
+		ses.setAttribute("rname",ruser.getFirstname()+" "+ruser.getLastname() );
+		return modelAndView;
+		
+		
+	}
+	
+}  

@@ -1,0 +1,17 @@
+package com.bank.services;
+
+import com.bank.models.User;
+
+public interface UserService {
+
+	int createUser(User user);
+
+	boolean userExist(String userid);
+
+	User getUser(String userid);
+
+	int getAccountNo(String userid);
+
+	User getUser(int raccountno);
+
+}
