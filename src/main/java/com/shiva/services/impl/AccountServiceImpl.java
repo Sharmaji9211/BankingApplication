@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
 		Account account=accountRepository.findById(accountno).orElse(null);
 		account.setAmount(account.getAmount()-amount);
 		accountRepository.save(account);
-		TransactionInfo transactionInfo=saveTransaction(amount, accountno, "Debite");
+		TransactionInfo transactionInfo=saveTransaction(amount, accountno, "Debit");
 		return transactionInfo;
 	}
 	private TransactionInfo saveTransaction(int amount, int accountno, String type) {
